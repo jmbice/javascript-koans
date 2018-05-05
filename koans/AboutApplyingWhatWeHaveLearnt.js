@@ -85,21 +85,75 @@ describe("About Applying What We Have Learnt", function() {
         }
     }
 
-    expect(ingredientCount['mushrooms']).toBe(FILL_ME_IN);
+    expect(ingredientCount['mushrooms']).toBe(2);
   });
 
   it("should count the ingredient occurrence (functional)", function () {
     var ingredientCount = { "{ingredient name}": 0 };
 
     /* chain() together map(), flatten() and reduce() */
+    // I feel confident using map, flatten, reduce, but they seem to be
+    // unnecessary if we are updating the ingredientCount object. However,
+    // for assignment purposes, I implemented them in a function that
+    // both tabulates the ingredientCount object, and creates a new array based on
+    // products array, which we work with to provide a single count value for
+    // single menu item ingredient
 
-    expect(ingredientCount['mushrooms']).toBe(FILL_ME_IN);
+    //if it were up to me, I would use map & include to update the ingredientCount
+    //object, or I would chain map, flatten, reduce to provide the count, but not
+    //both.
+    var ingredientToTest = 'mushrooms'
+
+    var tabulateIngredientsTwoWays = function(ingredient){
+        ingredientCount[ingredient] = (ingredientCount[ingredient] || 0) + 1;
+        return ingredient === ingredientToTest ? ingredient = 1 : ingredient = 0;
+    }
+
+    var iterateMenuAndTabulateIngredients = function(menuItem){
+        return menuItem.ingredients.map(tabulateIngredientsTwoWays)
+    }
+
+    var sumValues = function(prev, curr){
+            return prev += curr;
+        }
+
+    var timesIngredientUsed = _(products).chain()
+        .map(iterateMenuAndTabulateIngredients)
+        .flatten()
+        .reduce(sumValues, 0)
+        .value()
+
+      expect(ingredientCount[ingredientToTest]).toBe(timesIngredientUsed);
   });
 
   /*********************************************************************************/
   /* UNCOMMENT FOR EXTRA CREDIT */
-  /*
+
   it("should find the largest prime factor of a composite number", function () {
+    var getNumberRange = function(num){
+      return _.range(1, num + 1);
+    };
+    // 1 - 1000 number
+    // 0 - 999 index to access number
+    var getDivisibleNumbers = function(num){
+        var divisibleNumbers = [];
+        var stop = false;
+        getNumberRange(num).map(function(e){
+          num % e === 0 ? divisibleNumbers.push(e) : null;
+        })
+        return divisibleNumbers.reverse();
+    };
+
+    var isPrime = function(num){
+        return getDivisibleNumbers(num).length === 2 ? true : false;
+    };
+
+    var getLargestPrimeFactor = function (num){
+      var primeFactors = getDivisibleNumbers(num).filter(isPrime)
+      return primeFactors[0];
+    };
+
+    expect(getLargestPrimeFactor(12)).toBe(3);
 
   });
 
@@ -119,5 +173,5 @@ describe("About Applying What We Have Learnt", function() {
   it("should find the 10001st prime", function () {
 
   });
-  */
+
 });
